@@ -4,10 +4,12 @@ import Globe from './components/Globe'
 import HUD from './components/HUD'
 import TitleScreen from './components/TitleScreen'
 import DesignStudio from './components/DesignStudio'
+import EventModal from './components/EventModal'
 import {
   ORBITAL_SHELLS,
   STARTING_BUDGET,
-  REVENUE_PER_COVERAGE_PCT,
+  MONTHLY_REVENUE_PER_COVERAGE_PCT,
+  EVENTS,
   computeCoverage,
 } from './game/constants'
 
@@ -16,37 +18,53 @@ const freshState = () => ({
   designs: [],
   satellites: [],
   coverage: 0,
-  incomePerSecond: 0,
+  incomePerMonth: 0,
+  turn: 0,                // 0 = Jan 2025; increments each endTurn
+  activeModifiers: [],    // [{ id, type, value, turnsRemaining, desc }]
+  eventLog: [],           // [{ turn, title, category, effectDesc }]
 })
+
+// Derive a cost multiplier from active modifiers
+function getCostMultiplier(activeModifiers) {
+  return activeModifiers
+    .filter((m) => m.type === 'cost_multiplier')
+    .reduce((acc, m) => acc * m.value, 1)
+}
+
+// Derive an income multiplier from active modifiers
+function getIncomeMultiplier(activeModifiers) {
+  return activeModifiers
+    .filter((m) => m.type === 'income_multiplier')
+    .reduce((acc, m) => acc * m.value, 1)
+}
+
+// Pick a random eligible event given the current game state
+function pickEvent(gameState) {
+  const eligible = EVENTS.filter((e) => e.canOccur(gameState))
+  if (eligible.length === 0) return EVENTS[0] // fallback
+  return eligible[Math.floor(Math.random() * eligible.length)]
+}
 
 export default function App() {
   const [phase, setPhase] = useState('menu')
   const [gameState, setGameState] = useState(freshState)
   const [studioOpen, setStudioOpen] = useState(false)
   const [editingDesign, setEditingDesign] = useState(null)
-
-  // Revenue ticker — runs every second while playing
-  useEffect(() => {
-    if (phase !== 'playing') return
-    const id = setInterval(() => {
-      setGameState((prev) => ({
-        ...prev,
-        budget: prev.budget + prev.incomePerSecond,
-      }))
-    }, 1000)
-    return () => clearInterval(id)
-  }, [phase])
+  const [pendingEvent, setPendingEvent] = useState(null) // event result to show in modal
 
   // Recompute coverage + income whenever satellites change
   useEffect(() => {
     if (phase !== 'playing') return
-    const cov = computeCoverage(gameState.satellites)
-    const ips = Math.floor(cov * REVENUE_PER_COVERAGE_PCT)
-    setGameState((prev) => ({ ...prev, coverage: cov, incomePerSecond: ips }))
+    setGameState((prev) => {
+      const cov = computeCoverage(prev.satellites)
+      const incomePerMonth = Math.floor(cov * MONTHLY_REVENUE_PER_COVERAGE_PCT)
+      return { ...prev, coverage: cov, incomePerMonth }
+    })
   }, [gameState.satellites, phase])
 
   const startGame = useCallback(() => {
     setGameState(freshState())
+    setPendingEvent(null)
     setPhase('playing')
   }, [])
 
@@ -82,7 +100,9 @@ export default function App() {
     setGameState((prev) => {
       const design = prev.designs.find((d) => d.id === designId)
       if (!design) return prev
-      const totalCost = design.totalCost * quantity
+
+      const costMult = getCostMultiplier(prev.activeModifiers)
+      const totalCost = Math.floor(design.totalCost * costMult) * quantity
       if (prev.budget < totalCost) return prev
 
       const shell = ORBITAL_SHELLS[design.shellKey]
@@ -90,7 +110,6 @@ export default function App() {
       const newSats = Array.from({ length: quantity }, (_, i) => {
         const inclination = Math.random() * Math.PI
         const raan = Math.random() * Math.PI * 2
-        // Precompute orbit-plane rotation matrix (inclination + RAAN never change)
         const m = new THREE.Matrix4()
         m.makeRotationY(raan)
         m.multiply(new THREE.Matrix4().makeRotationZ(inclination))
@@ -103,7 +122,7 @@ export default function App() {
           speed: shell.speed,
           color: shell.color,
           coverage: design.coverage,
-          rotationMatrix: Array.from(m.elements), // 16-element flat array
+          rotationMatrix: Array.from(m.elements),
         }
       })
 
@@ -115,6 +134,66 @@ export default function App() {
     })
   }, [])
 
+  const endTurn = useCallback(() => {
+    setGameState((prev) => {
+      // 1. Tick modifiers (decrement turns, remove expired)
+      const tickedModifiers = prev.activeModifiers
+        .map((m) => ({ ...m, turnsRemaining: m.turnsRemaining - 1 }))
+        .filter((m) => m.turnsRemaining > 0)
+
+      // 2. Apply monthly income with current income modifier
+      const incomeMult = getIncomeMultiplier(tickedModifiers)
+      const monthlyIncome = Math.floor(prev.incomePerMonth * incomeMult)
+
+      // 3. Pick and apply event
+      const stateForEvent = { ...prev, activeModifiers: tickedModifiers }
+      const eventTemplate = pickEvent(stateForEvent)
+      const result = eventTemplate.apply(stateForEvent)
+
+      const budgetDelta = result.budgetDelta ?? 0
+      const newSatellites = result.newSatellites ?? prev.satellites
+      const addedModifiers = result.newModifiers ?? []
+
+      const newModifiers = [...tickedModifiers, ...addedModifiers]
+      const newBudget = prev.budget + monthlyIncome + budgetDelta
+
+      // 4. Record event in log
+      const logEntry = {
+        turn: prev.turn,
+        title: eventTemplate.title,
+        category: eventTemplate.category,
+        effectDesc: result.effectDesc,
+      }
+
+      // 5. Build the modal event object
+      const modalEvent = {
+        title: eventTemplate.title,
+        category: eventTemplate.category,
+        description: eventTemplate.description,
+        effectDesc: result.effectDesc,
+        incomeEarned: monthlyIncome,
+      }
+
+      // Schedule the modal after state update
+      setTimeout(() => setPendingEvent(modalEvent), 0)
+
+      return {
+        ...prev,
+        budget: newBudget,
+        satellites: newSatellites,
+        activeModifiers: newModifiers,
+        eventLog: [logEntry, ...prev.eventLog],
+        turn: prev.turn + 1,
+      }
+    })
+  }, [])
+
+  const dismissEvent = useCallback(() => {
+    setPendingEvent(null)
+  }, [])
+
+  const costMultiplier = getCostMultiplier(gameState.activeModifiers)
+
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Globe satellites={gameState.satellites} autoRotate={phase === 'menu'} />
@@ -125,11 +204,13 @@ export default function App() {
         <>
           <HUD
             gameState={gameState}
+            costMultiplier={costMultiplier}
             onLaunch={launchSatellites}
             onOpenStudio={() => openStudio(null)}
             onEditDesign={openStudio}
             onDeleteDesign={deleteDesign}
             onMainMenu={() => setPhase('menu')}
+            onEndTurn={endTurn}
           />
           {studioOpen && (
             <DesignStudio
@@ -137,6 +218,9 @@ export default function App() {
               onSave={saveDesign}
               onClose={closeStudio}
             />
+          )}
+          {pendingEvent && (
+            <EventModal event={pendingEvent} onDismiss={dismissEvent} />
           )}
         </>
       )}

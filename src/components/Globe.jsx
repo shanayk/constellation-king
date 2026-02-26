@@ -60,7 +60,7 @@ function WorldCountries() {
   const [lineGeo, setLineGeo] = useState(() => _worldGeo)
 
   const lineMat = useMemo(() => {
-    const mat = new THREE.LineBasicMaterial({ color: '#1a7fff', transparent: true, opacity: 0.8 })
+    const mat = new THREE.LineBasicMaterial({ color: '#39FF14', transparent: true, opacity: 0.7 })
     mat.onBeforeCompile = (shader) => {
       shader.vertexShader = shader.vertexShader.replace(
         '#include <project_vertex>',
@@ -87,12 +87,12 @@ function EarthGlobe() {
     <group>
       <mesh>
         <sphereGeometry args={[GLOBE_RADIUS - 0.01, 36, 18]} />
-        <meshBasicMaterial color="#010d1f" />
+        <meshBasicMaterial color="#000a00" />
       </mesh>
       <WorldCountries />
       <mesh>
         <sphereGeometry args={[GLOBE_RADIUS + 0.04, 32, 16]} />
-        <meshBasicMaterial color="#0033aa" transparent opacity={0.07} side={2} />
+        <meshBasicMaterial color="#003300" transparent opacity={0.1} side={2} />
       </mesh>
     </group>
   )
@@ -187,11 +187,11 @@ export default function Globe({ satellites, autoRotate = false }) {
       camera={{ position: [0, 2.5, 6.5], fov: 42 }}
       style={{ position: 'absolute', inset: 0, background: 'transparent' }}
     >
-      <ambientLight intensity={0.2} />
-      <pointLight position={[8, 8, 8]} intensity={1.2} color="#ffffff" />
-      <pointLight position={[-8, -4, -8]} intensity={0.4} color="#3355ff" />
+      <ambientLight intensity={0.15} color="#39FF14" />
+      <pointLight position={[8, 8, 8]} intensity={1.0} color="#aaffaa" />
+      <pointLight position={[-8, -4, -8]} intensity={0.3} color="#00ff44" />
 
-      <Stars radius={100} depth={50} count={6000} factor={4} saturation={0} fade />
+      <Stars radius={100} depth={50} count={4000} factor={3} saturation={0} fade />
 
       <EarthGlobe />
 
