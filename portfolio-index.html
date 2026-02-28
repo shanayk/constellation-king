@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shanay Kothari — RF Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --bg-alt: #f0ece4;
+      --ink: #1c1a17;
+      --ink-muted: #5a5650;
+      --ink-faint: #9a9590;
+      --accent: #8b2e2e;
+      --accent-soft: #c05c3a;
+      --border: #d8d2c8;
+      --border-strong: #b0a898;
+      --serif: 'EB Garamond', Georgia, serif;
+      --display: 'Playfair Display', Georgia, serif;
+      --mono: 'JetBrains Mono', 'Courier New', monospace;
+      --max-w: 740px;
+      --side-w: 200px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.72;
+      min-height: 100vh;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* ── LAYOUT WRAPPER ── */
+    .site-wrap {
+      max-width: calc(var(--max-w) + var(--side-w) + 80px);
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: var(--side-w) 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 0 48px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR NAV ── */
+    .sidebar {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      position: sticky;
+      top: 48px;
+      padding-top: 60px;
+      padding-bottom: 40px;
+    }
+
+    .site-name {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .site-title {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 28px;
+    }
+
+    .nav-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    nav ul { list-style: none; }
+
+    nav ul li {
+      margin-bottom: 2px;
+    }
+
+    nav ul li a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-decoration: none;
+      color: var(--ink-muted);
+      letter-spacing: 0.05em;
+      padding: 3px 0;
+      display: block;
+      border-left: 2px solid transparent;
+      padding-left: 8px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    .nav-section-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+      margin: 14px 0 4px 8px;
+    }
+
+    .sidebar-footer {
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-footer a {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--ink-faint);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+      transition: color 0.15s;
+    }
+    .sidebar-footer a:hover { color: var(--accent); }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      padding: 60px 0 100px;
+      max-width: var(--max-w);
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      margin-bottom: 52px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .page-header h1 {
+      font-family: var(--display);
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .page-header .tagline {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 20px;
+    }
+
+    .page-header .bio {
+      font-size: 1.05rem;
+      color: var(--ink-muted);
+      max-width: 560px;
+      font-style: italic;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      margin-bottom: 64px;
+      scroll-margin-top: 32px;
+    }
+
+    .section-heading {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RESUME / ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 40px;
+    }
+
+    .about-text {
+      grid-column: 1 / -1;
+      font-size: 1rem;
+      line-height: 1.78;
+      color: var(--ink);
+    }
+
+    .about-text p + p { margin-top: 1em; }
+
+    .resume-block { margin-bottom: 32px; }
+
+    .resume-block h3 {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .resume-block .org {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--accent-soft);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .resume-block .period {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--ink-faint);
+      float: right;
+      letter-spacing: 0.04em;
+    }
+
+    .resume-block p {
+      font-size: 0.92rem;
+      color: var(--ink-muted);
+      line-height: 1.65;
+    }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .skill-tag {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      padding: 3px 9px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--ink-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 40px;
+    }
+
+    /* ── PROJECTS ── */
+    .project-card {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 24px;
+      align-items: start;
+      transition: background 0.15s;
+    }
+
+    .project-card:last-child { border-bottom: 1px solid var(--border); }
+
+    .project-card h3 {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+      grid-column: 1;
+    }
+
+    .project-status {
+      grid-column: 2;
+      grid-row: 1;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      align-self: start;
+      margin-top: 4px;
+    }
+
+    .status-active {
+      background: #e8f2e8;
+      color: #3a6b3a;
+      border: 1px solid #b8d8b8;
+    }
+
+    .status-wip {
+      background: #f2ede0;
+      color: #7a5c28;
+      border: 1px solid #d8c898;
+    }
+
+    .status-planned {
+      background: var(--bg-alt);
+      color: var(--ink-faint);
+      border: 1px solid var(--border);
+    }
+
+    .project-desc {
+      grid-column: 1;
+      font-size: 0.94rem;
+      color: var(--ink-muted);
+      line-height: 1.68;
+    }
+
+    .project-tags {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .project-tag {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      padding: 2px 7px;
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--ink-faint);
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .contact-item {
+      padding: 20px 24px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .contact-item .label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+    }
+
+    .contact-item a, .contact-item span {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .contact-item a:hover { text-decoration: underline; }
+
+    .contact-note {
+      margin-top: 24px;
+      font-size: 0.94rem;
+      color: var(--ink-muted);
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    /* ── FOOTNOTE / FOOTER ── */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+      grid-column: 2;
+    }
+
+    /* ── SIGNAL DECORATION ── */
+    .signal-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 18px;
+    }
+
+    .signal-bar span {
+      display: block;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 1px;
+      opacity: 0.7;
+    }
+
+    /* ── WAVEFORM SVG SEPARATOR ── */
+    .wave-sep {
+      margin: 40px 0;
+      opacity: 0.3;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 3px solid var(--accent);
+      margin: 28px 0 28px 24px;
+      padding: 4px 0 4px 20px;
+      font-style: italic;
+      color: var(--ink-muted);
+      font-size: 1.02rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .site-wrap {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .sidebar {
+        grid-column: 1;
+        grid-row: 1;
+        position: static;
+        padding: 32px 0 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .sidebar-footer { display: none; }
+
+      nav ul { display: flex; flex-wrap: wrap; gap: 4px; }
+
+      .nav-section-label { display: none; }
+
+      main {
+        grid-column: 1;
+        grid-row: 2;
+        padding: 32px 0 60px;
+      }
+
+      .about-grid,
+      .two-col,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-text { grid-column: 1; }
+    }
+
+    /* ── FADE IN ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header   { animation: fadeUp 0.5s ease both; }
+    section:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+    section:nth-child(2) { animation: fadeUp 0.5s 0.2s ease both; }
+    section:nth-child(3) { animation: fadeUp 0.5s 0.3s ease both; }
+    section:nth-child(4) { animation: fadeUp 0.5s 0.4s ease both; }
+  </style>
+</head>
+<body>
+
+<div class="site-wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="site-name">Shanay Kothari</div>
+    <div class="site-title">RF Engineer</div>
+
+    <div class="signal-bar">
+      <span style="height:5px"></span>
+      <span style="height:8px"></span>
+      <span style="height:12px"></span>
+      <span style="height:16px"></span>
+      <span style="height:11px"></span>
+      <span style="height:7px"></span>
+      <span style="height:14px"></span>
+      <span style="height:9px"></span>
+    </div>
+
+    <hr class="nav-divider">
+
+    <nav>
+      <div class="nav-section-label">sections</div>
+      <ul>
+        <li><a href="#about">About & CV</a></li>
+        <li><a href="#patents">Patents</a></li>
+        <li><a href="#projects">Hobby Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="mailto:shanay2346@gmail.com">shanay2346@gmail.com</a>
+      <a href="https://github.com" target="_blank">github.com/shanaykothari</a>
+      <a href="https://www.linkedin.com/in/shanaykothari" target="_blank">linkedin.com/in/shanaykothari</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <header class="page-header">
+      <p class="tagline">RF / Microwave Engineering</p>
+      <h1>Shanay Kothari</h1>
+      <p class="bio">RF Engineer at SpaceX, working on satellite communications systems. Previously at Cisco Meraki and Apple. I think about antennas, phased arrays, and the electromagnetic world they inhabit.</p>
+    </header>
+
+    <!-- ── ABOUT / RESUME ── -->
+    <section id="about">
+      <div class="section-heading">About &amp; Résumé</div>
+
+      <div class="about-text">
+        <p>I'm an RF engineer at SpaceX, where I've been working since 2020 on satellite communications systems — including phased array antennas for LEO constellations. Before that I spent three years at Cisco Meraki leading wireless hardware quality and building out an in-house RF test lab, and a year at Supply Inc. developing OTA wireless charging solutions.</p>
+        <p>My career in RF started with an internship at Apple on the iPhone RF Systems Engineering team. In 2022 I co-authored an IEEE paper on incident power density of electrically-large planar phased arrays communicating with non-geostationary satellites — a problem that sits at the intersection of antenna engineering, EMF compliance, and the realities of constantly scanning LEO beams.</p>
+      </div>
+
+      <div class="wave-sep">
+        <svg width="100%" height="24" viewBox="0 0 600 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 12 Q30 4 60 12 Q90 20 120 12 Q150 4 180 12 Q210 20 240 12 Q270 4 300 12 Q330 20 360 12 Q390 4 420 12 Q450 20 480 12 Q510 4 540 12 Q570 20 600 12"
+                stroke="#8b2e2e" stroke-width="1.2" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div style="font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:16px;">Experience</div>
+
+          <div class="resume-block">
+            <div class="period">2020 – present</div>
+            <h3>Senior Radio Frequency Engineer</h3>
+            <div class="org">SpaceX · Hawthorne, CA</div>
+            <p>Working on satellite communications systems and phased array antenna design for LEO constellation terminals. Co-authored IEEE research on RF EMF exposure and incident power density of scanning phased arrays.</p>
+          </div>
+
+          <div class="resume-block">
+            <div class="period">2017 – 2020</div>
+            <h3>Wireless Hardware Quality Engineer</h3>
+            <div class="org">Cisco Meraki · San Francisco, CA</div>
+            <p>Led wireless hardware quality assurance for Meraki access points; established an in-house RF test lab for characterizing antenna and radio performance across 2.4, 5, and 6 GHz bands.</p>
+          </div>
+
+          <div class="resume-block">
+            <div class="period">2016 – 2017</div>
+            <h3>Lead RF Engineer</h3>
+            <div class="org">Supply Inc.</div>
+            <p>Led development of an OTA (over-the-air) wireless charging solution, covering coil design, near-field coupling analysis, and regulatory compliance.</p>
+          </div>
+
+          <div class="resume-block">
+            <div class="period">2015</div>
+            <h3>iPhone RF Systems Engineering Intern</h3>
+            <div class="org">Apple · Cupertino, CA</div>
+            <p>RF system testing and design tasks across iPhone antenna and radio subsystems.</p>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:16px;">Education</div>
+
+          <div class="resume-block">
+            <div class="period">[Year]</div>
+            <h3>B.S. / M.S. Electrical Engineering</h3>
+            <div class="org">[University — add yours here]</div>
+            <p>Focus on RF and microwave engineering, antenna systems, and electromagnetics.</p>
+          </div>
+
+          <div class="resume-block">
+            <div class="period">2022</div>
+            <h3>IEEE Publication</h3>
+            <div class="org">IEEE ISPCE</div>
+            <p><em>Incident Power Density of Electrically-Large Planar Phased Arrays Communicating with Non-Geostationary Satellites.</em> Co-authored with D. Novotny et al.</p>
+          </div>
+
+          <div style="margin-top:28px;">
+            <div style="font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:10px;">Core Skills</div>
+            <div class="skills-grid">
+              <span class="skill-tag">HFSS / CST</span>
+              <span class="skill-tag">ADS</span>
+              <span class="skill-tag">Keysight VNA</span>
+              <span class="skill-tag">Antenna Design</span>
+              <span class="skill-tag">Phased Arrays</span>
+              <span class="skill-tag">LNA / PA</span>
+              <span class="skill-tag">Link Budgets</span>
+              <span class="skill-tag">5G NR</span>
+              <span class="skill-tag">Radar Systems</span>
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">MATLAB</span>
+              <span class="skill-tag">SPICE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PATENTS ── -->
+    <section id="patents">
+      <div class="section-heading">Patents</div>
+
+      <div class="project-card">
+        <h3>Smart Rectenna Design for Passive Wireless Power Harvesting</h3>
+        <div class="project-status status-active">Granted</div>
+        <p class="project-desc">A system enabling passive power harvesting from ambient electromagnetic emissions using a smart rectenna with automatic frequency response tuning. Combines a tunable high-pass filter and voltage multiplier rectifier with an ultra-wideband antenna, using a lookup table to bias tunable components toward the frequency region of maximum power spectral density in incident energy signals.</p>
+        <div class="project-tags">
+          <span class="project-tag">US20210384775A1</span>
+          <span class="project-tag">Cisco Technology Inc</span>
+          <span class="project-tag">Filed Aug 2018</span>
+          <span class="project-tag">Published Dec 2021</span>
+          <span class="project-tag"><a href="https://patents.google.com/patent/US20210384775A1/en" target="_blank" style="color:inherit;text-decoration:none;">View Patent ↗</a></span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <h3>Enhancing Indoor Positioning Using RF Multilateration and Optical Sensing</h3>
+        <div class="project-status status-active">Granted</div>
+        <p class="project-desc">A system combining radio frequency multilateration with machine vision for high-accuracy indoor positioning. Wireless access points determine an approximate location area from broadcast signals; camera-based image analysis then refines that position and classifies detected targets — significantly reducing computational requirements compared to purely RF-based or vision-based approaches alone.</p>
+        <div class="project-tags">
+          <span class="project-tag">US20190182790A1</span>
+          <span class="project-tag">Cisco Technology Inc</span>
+          <span class="project-tag">Filed Dec 2017</span>
+          <span class="project-tag">Published Jun 2019</span>
+          <span class="project-tag"><a href="https://patents.google.com/patent/US20190182790A1/" target="_blank" style="color:inherit;text-decoration:none;">View Patent ↗</a></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOBBY PROJECTS ── -->
+    <section id="projects">
+      <div class="section-heading">Hobby Projects</div>
+
+      <div class="pull-quote">
+        "The best way to understand a system is to build a broken version of it and nurse it back to health."
+      </div>
+
+      <div class="project-card">
+        <h3>Homebrew VNA</h3>
+        <div class="project-status status-active">Active</div>
+        <p class="project-desc">A two-port vector network analyzer built from scratch using an Si5351 clock generator, a pair of directional couplers wound on ferrite cores, and an RTL-SDR as the detector. Covers 10 kHz – 200 MHz. Calibration routines written in Python using the 12-term SOLT model.</p>
+        <div class="project-tags">
+          <span class="project-tag">RF Instrumentation</span>
+          <span class="project-tag">Python</span>
+          <span class="project-tag">Si5351</span>
+          <span class="project-tag">SDR</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <h3>60 GHz Imaging Radar</h3>
+        <div class="project-status status-wip">In Progress</div>
+        <p class="project-desc">Experimenting with a TI IWR6843 FMCW radar module to produce 2D range-angle maps of a room. Currently working on the CFAR detector and angle estimation from a virtual aperture formed by the on-chip antenna array.</p>
+        <div class="project-tags">
+          <span class="project-tag">mmWave</span>
+          <span class="project-tag">FMCW Radar</span>
+          <span class="project-tag">Signal Processing</span>
+          <span class="project-tag">TI AWR</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <h3>Magnetic Loop Antenna for 40m</h3>
+        <div class="project-status status-active">Active</div>
+        <p class="project-desc">A small transmitting loop for 7 MHz amateur radio operation from an apartment. The challenge: achieving Q &gt; 800 with a 1m diameter loop using silver-plated copper tubing, and building a motorized vacuum capacitor tuner controlled via a Raspberry Pi.</p>
+        <div class="project-tags">
+          <span class="project-tag">Antenna</span>
+          <span class="project-tag">Amateur Radio</span>
+          <span class="project-tag">HF</span>
+          <span class="project-tag">Raspberry Pi</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <h3>Noise Figure Measurement Jig</h3>
+        <div class="project-status status-planned">Planned</div>
+        <p class="project-desc">A low-cost noise source calibration fixture using an avalanche diode noise source and a well-characterized LNA as a reference. Goal: measure noise figures down to ~0.5 dB without a dedicated noise figure analyzer.</p>
+        <div class="project-tags">
+          <span class="project-tag">Noise Figure</span>
+          <span class="project-tag">Measurement</span>
+          <span class="project-tag">LNA</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact">
+      <div class="section-heading">Contact</div>
+
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="label">Email</div>
+          <a href="mailto:shanay2346@gmail.com">shanay2346@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <div class="label">GitHub</div>
+          <a href="https://github.com" target="_blank">github.com/shanaykothari</a>
+        </div>
+        <div class="contact-item">
+          <div class="label">LinkedIn</div>
+          <a href="https://www.linkedin.com/in/shanaykothari" target="_blank">linkedin.com/in/shanaykothari</a>
+        </div>
+        <div class="contact-item">
+          <div class="label">Amateur Radio</div>
+          <span>AA0XYZ</span>
+        </div>
+      </div>
+
+      <p class="contact-note">I'm always happy to talk about RF engineering, antenna design, measurement techniques, or hobby radio. If you're working on something interesting and want a second opinion on a design, feel free to reach out.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>Shanay Kothari · RF Engineer · Last updated February 2026</span>
+  </footer>
+
+</div>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
